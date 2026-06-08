@@ -1,0 +1,14 @@
+# Ejecutables compilados
+*.exe
+*.out
+*.app
+
+# Carpetas de compilación
+build/
+bin/
+obj/
+
+# Si usas Visual Studio o VS Code
+.vscode/
+.vs/
+*.user
