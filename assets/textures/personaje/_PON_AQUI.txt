@@ -1,0 +1,1 @@
+Coloca aqui: chango_arriba.png, chango_aplastar.png, chango_izquierda.png, chango_derecha.png
