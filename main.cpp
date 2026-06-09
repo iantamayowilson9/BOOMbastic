@@ -1,51 +1,76 @@
-/* ===========================================================================
-   MAIN.CPP  -  ARCHIVO PRINCIPAL DEL JUEGO BOOMBASTIC
-   AQUI SOLO ESTA EL MENU DE LLAMADAS: ABRE LA VENTANA, CORRE EL CICLO
-   Y SEGUN LA PANTALLA LLAMA A LAS FUNCIONES QUE VIVEN EN game.h
-=========================================================================== */
-#include "game.h"
+#include "globales.h"
+#include "jugador.h"
+#include "frutas.h"
+#include "interfaz.h"
+#include "programa.h"
 
 int main()
 {
-    // ABRO LA VENTANA Y FIJO 60 CUADROS POR SEGUNDO
-    InitWindow(ANCHO, ALTO, "Boombastic");
+    InitWindow(V_ANCHO, V_ALTO, "Boombastic");
     SetTargetFPS(60);
 
-    // PREPARO LOS BOTONES, LEO LOS RECORDS Y CARGO LOS CUADROS DE LA INTRO
     iniciar_botones_menu();
     cargar_records();
     cargar_cuadros_intro();
     cargar_ui();
 
-    // CICLO PRINCIPAL DEL JUEGO
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
 
-        // PRIMERO ACTUALIZO SEGUN LA PANTALLA EN LA QUE ESTOY
-        if (pantalla_actual == PANTALLA_INTRO)        actualizar_intro(dt);
-        else if (pantalla_actual == PANTALLA_MENU)    actualizar_menu();
-        else if (pantalla_actual == PANTALLA_RECORDS) actualizar_records();
-        else if (pantalla_actual == PANTALLA_JUEGO)   actualizar_juego(dt);
-        else if (pantalla_actual == PANTALLA_FIN)     actualizar_fin();
+        // Actualizar pantalla actual
+        switch (pantalla_actual)
+        {
+        case INTRO:
+            actualizar_intro(dt);
+            break;
+        case MENU:
+            actualizar_menu();
+            break;
+        case RECORDS:
+            actualizar_records();
+            break;
+        case JUEGO:
+            actualizar_juego(dt);
+            break;
+        case FIN:
+            actualizar_fin();
+            break;
+        default:
+            break;
+        }
 
-        // DESPUES DIBUJO SEGUN LA PANTALLA
+        // Dibujar segun la pantalla
         BeginDrawing();
         ClearBackground(BLACK);
 
-        if (pantalla_actual == PANTALLA_INTRO)        dibujar_intro();
-        else if (pantalla_actual == PANTALLA_MENU)    dibujar_menu();
-        else if (pantalla_actual == PANTALLA_RECORDS) dibujar_records();
-        else if (pantalla_actual == PANTALLA_JUEGO)   dibujar_juego();
-        else if (pantalla_actual == PANTALLA_FIN)     dibujar_fin();
+        switch (pantalla_actual)
+        {
+        case INTRO:
+            dibujar_intro();
+            break;
+        case MENU:
+            dibujar_menu();
+            break;
+        case RECORDS:
+            dibujar_records();
+            break;
+        case JUEGO:
+            dibujar_juego();
+            break;
+        case FIN:
+            dibujar_fin();
+            break;
+        default:
+            break;
+        }
 
-        // EL FILTRO RETRO SE PINTA ENCIMA DE TODO
         dibujar_filtro();
 
         EndDrawing();
     }
 
-    // LIBERO LAS IMAGENES Y CIERRO LA VENTANA AL SALIR
+    // Descargar imagenes y salir
     descargar_cuadros_intro();
     descargar_ui();
     CloseWindow();

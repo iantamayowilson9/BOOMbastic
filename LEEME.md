@@ -32,6 +32,10 @@ A mano en Windows (MinGW / w64devkit):
     g++ main.cpp -o boombastic.exe -lraylib -lopengl32 -lgdi32 -lwinmm
     .\boombastic.exe
 
+    g++ -std=c++11 -Wall main.cpp -o boombastic.exe -I C:/raylib/raylib/src -L C:/raylib/raylib/src -lraylib -lopengl32 -lgdi32 -lwinmm
+
+    g++ -std=c++11 -Wall *.cpp -o boombastic.exe -I"C:/raylib/raylib/src" -L"C:/raylib/raylib/src" -lraylib -lopengl32 -lgdi32 -lwinmm
+
 ## Controles
 
 - Flechas izquierda/derecha (o A/D): mover al chango
