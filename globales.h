@@ -59,6 +59,15 @@ enum Fase
     HORAS // Horas (con minutos) -> Objetivo: Llegar a 2 horas
 };
 
+// Estado del jugador
+enum EstadoTextura
+{
+    SALTO,
+    IZQ,
+    DER,
+    CAIDA,
+};
+
 // Personaje que controla el jugador
 struct Jugador
 {
@@ -68,6 +77,7 @@ struct Jugador
     float vel_y;
     bool clavando; // Verdadero mientras realiza un clavado (presionar espacio)
     float invulnerable; // Cuenta regresiva para la invulneravilidad
+    int estado_textura;
 };
 
 // Frutas que se desplazan por el suelo
@@ -168,7 +178,10 @@ extern Texture2D tex_boton_normal;
 extern Texture2D tex_boton_hover;
 extern bool ui_cargada;
 
-extern Texture2D textura_chango;
+extern Texture2D textura_chango_salto;
+extern Texture2D textura_chango_izq;
+extern Texture2D textura_chango_der;
+extern Texture2D textura_chango_cayendo;
 extern bool textura_chango_cargada;
 
 // ==================================================================================================== DECLARACION DE FUNCIONES

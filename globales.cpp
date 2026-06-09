@@ -34,7 +34,11 @@ Texture2D tex_boton_normal;
 Texture2D tex_boton_hover;
 bool ui_cargada = false;
 
-Texture2D textura_chango;
+Texture2D textura_chango_salto;
+Texture2D textura_chango_izq;
+Texture2D textura_chango_der;
+Texture2D textura_chango_cayendo;
+
 bool textura_chango_cargada = false;
 
 void dibujar_texto_centrado(const char texto[], int centro_x, int y, int tam, Color color)

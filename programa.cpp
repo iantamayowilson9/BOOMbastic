@@ -2,6 +2,7 @@
 #include "jugador.h"
 #include "frutas.h"
 #include "interfaz.h"
+#include "globales.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -48,19 +49,27 @@ void descargar_ui()
     ui_cargada = false;
 }
 
-void cargar_jugador()
+void cargar_texturas_jugador()
 {
-    textura_chango = LoadTexture("recursos/imgs/jugador/jugador.png");
+    textura_chango_salto = LoadTexture("recursos/imgs/jugador/jugador.png");
+    textura_chango_izq = LoadTexture("recursos/imgs/jugador/jugador_izq.png");
+    textura_chango_der = LoadTexture("recursos/imgs/jugador/jugador_der.png");
+    textura_chango_cayendo = LoadTexture("recursos/imgs/jugador/jugador_cayendo.png");
+
     textura_chango_cargada = true;
 }
 
-void descargar_jugador()
+void descargar_texturas_jugador()
 {
     if (!textura_chango_cargada)
     {
         return;
     }
-    UnloadTexture(textura_chango);
+    UnloadTexture(textura_chango_salto);
+    UnloadTexture(textura_chango_izq);
+    UnloadTexture(textura_chango_der);
+    UnloadTexture(textura_chango_cayendo);
+
     textura_chango_cargada = false;
 }
 // Leer tabla de records de "records.dat" o crearla si no existe
@@ -176,6 +185,7 @@ void iniciar_partida()
     chango.clavando = false;
     chango.invulnerable = 0;
     chango.vida = 3;
+    chango.estado_textura = CAIDA;
 
     for (int i = 0; i < MAX_FRUTAS; i++)
         frutas[i].activa = false;
@@ -217,10 +227,12 @@ void actualizar_juego(float dt)
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
     {
         chango.pos.x -= VEL_LATERAL * dt;
+        chango.estado_textura = IZQ;
     }
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
     {
         chango.pos.x += VEL_LATERAL * dt;
+        chango.estado_textura = DER;
     }
     if (chango.pos.x < 0)
     {
@@ -233,41 +245,68 @@ void actualizar_juego(float dt)
 
     // SUBIR Y BAJAR LA GRAVEDAD CON LAS FLECHAS
     if (IsKeyDown(KEY_UP))
+    {
         gravedad += GRAVEDAD_PASO * 40 * dt;
+    }
     if (IsKeyDown(KEY_DOWN))
+    {
         gravedad -= GRAVEDAD_PASO * 40 * dt;
+    }
     if (IsKeyPressed(KEY_UP))
+    {
         gravedad += GRAVEDAD_PASO;
+    }
     if (IsKeyPressed(KEY_DOWN))
+    {
         gravedad -= GRAVEDAD_PASO;
+    }
     if (gravedad < GRAVEDAD_MIN)
+    {
         gravedad = GRAVEDAD_MIN;
+    }
     if (gravedad > GRAVEDAD_MAX)
+    {
         gravedad = GRAVEDAD_MAX;
+    }
 
     // CLAVADO CON ESPACIO PARA CAER MAS RAPIDO
     if (IsKeyPressed(KEY_SPACE))
     {
         chango.vel_y = CLAVADO;
         chango.clavando = true;
+        chango.estado_textura = CAIDA;
     }
     if (chango.vel_y < 0)
+    {
         chango.clavando = false;
+    }
 
     // FISICA HACIA ARRIBA Y ABAJO
     chango.vel_y += gravedad * dt;
+    if (!chango.clavando)
+    {
+        if (chango.vel_y < -50) // Subiendo
+        {
+            chango.estado_textura = SALTO;
+        }
+        else if (chango.vel_y > 50) // Cayendo
+        {
+            chango.estado_textura = SALTO;
+        }
+    }
     chango.pos.y += chango.vel_y * dt;
     if (chango.pos.y < 0)
     { // TOPE DE ARRIBA
         chango.pos.y = 0;
         if (chango.vel_y < 0)
+        {
             chango.vel_y = 0;
+        }
     }
     if (chango.invulnerable > 0)
         chango.invulnerable -= dt;
 
-    Rectangle caja_chango = {chango.pos.x, chango.pos.y,
-                             chango.tam.x, chango.tam.y};
+    Rectangle caja_chango = {chango.pos.x, chango.pos.y, chango.tam.x, chango.tam.y};
     float pies = chango.pos.y + chango.tam.y;
 
     // VAN NACIENDO FRUTAS CON EL TIEMPO
@@ -294,7 +333,9 @@ void actualizar_juego(float dt)
         }
 
         if (!CheckCollisionCircleRec(frutas[i].pos, frutas[i].radio, caja_chango))
+        {
             continue;
+        }
 
         if (frutas[i].valor < 0)
         {
@@ -305,6 +346,8 @@ void actualizar_juego(float dt)
                 combo = 0;
                 chango.invulnerable = INVULN;
                 chango.vel_y = REBOTE;
+                chango.clavando = false;
+                chango.estado_textura = SALTO;
                 crear_particulas(frutas[i].pos, RED, 18);
                 crear_texto_flotante(frutas[i].pos, "BOMBA! -1", RED);
                 frutas[i].activa = false;
@@ -330,7 +373,9 @@ void actualizar_juego(float dt)
                 {
                     // SUBE EL COMBO Y MULTIPLICA LOS PUNTOS
                     if (combo < COMBO_MAX)
+                    {
                         combo++;
+                    }
                     puntos += frutas[i].valor * combo; // x1 HASTA x5
                     char texto[24];
                     sprintf(texto, "+%d x%d", frutas[i].valor, combo);
@@ -342,6 +387,7 @@ void actualizar_juego(float dt)
                 parpadeo_puntaje = 0.35f;
                 chango.vel_y = REBOTE;
                 chango.clavando = false;
+                chango.estado_textura = SALTO;
                 crear_particulas(frutas[i].pos, frutas[i].color, 14);
                 frutas[i].activa = false;
             }
@@ -363,6 +409,7 @@ void actualizar_juego(float dt)
         }
         chango.vel_y = REBOTE;
         chango.clavando = false;
+        chango.estado_textura = SALTO;
     }
 
     // REVISAR SI YA LLEGUE A LA META DEL NIVEL
