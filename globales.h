@@ -64,10 +64,10 @@ struct Jugador
 {
     Vector2 pos;
     Vector2 tam;
-    float vel_y;
-    bool clavando;      // Verdadero mientras realiza un clavado (presionar espacio)
-    float invulnerable; // Cuenta regresiva para la invulneravilidad
     int vida;
+    float vel_y;
+    bool clavando; // Verdadero mientras realiza un clavado (presionar espacio)
+    float invulnerable; // Cuenta regresiva para la invulneravilidad
 };
 
 // Frutas que se desplazan por el suelo
@@ -167,6 +167,9 @@ extern Texture2D tex_logo;
 extern Texture2D tex_boton_normal;
 extern Texture2D tex_boton_hover;
 extern bool ui_cargada;
+
+extern Texture2D textura_chango;
+extern bool textura_chango_cargada;
 
 // ==================================================================================================== DECLARACION DE FUNCIONES
 

@@ -16,7 +16,7 @@ void cargar_cuadros_intro()
     for (int i = 0; i < CUADROS_INTRO; i++)
     {
         // LOS ARCHIVOS VAN DE frame_001 A frame_215 (POR ESO i + 1 Y %03d)
-        intro_cuadros[i] = LoadTexture(TextFormat("assets/intro/frame_%03d.png", i + 1));
+        intro_cuadros[i] = LoadTexture(TextFormat("recursos/intro/frame_%03d.png", i + 1));
     }
     intro_cargada = true;
 }
@@ -32,9 +32,9 @@ void descargar_cuadros_intro()
 
 void cargar_ui()
 {
-    tex_logo = LoadTexture("assets/ui/logo.png");
-    tex_boton_normal = LoadTexture("assets/ui/boton_normal.png");
-    tex_boton_hover = LoadTexture("assets/ui/boton_hover.png");
+    tex_logo = LoadTexture("recursos/ui/logo.png");
+    tex_boton_normal = LoadTexture("recursos/ui/boton_normal.png");
+    tex_boton_hover = LoadTexture("recursos/ui/boton_hover.png");
     ui_cargada = true;
 }
 
@@ -46,6 +46,22 @@ void descargar_ui()
     UnloadTexture(tex_boton_normal);
     UnloadTexture(tex_boton_hover);
     ui_cargada = false;
+}
+
+void cargar_jugador()
+{
+    textura_chango = LoadTexture("recursos/imgs/jugador/jugador.png");
+    textura_chango_cargada = true;
+}
+
+void descargar_jugador()
+{
+    if (!textura_chango_cargada)
+    {
+        return;
+    }
+    UnloadTexture(textura_chango);
+    textura_chango_cargada = false;
 }
 // Leer tabla de records de "records.dat" o crearla si no existe
 void cargar_records()
@@ -154,7 +170,7 @@ void iniciar_partida()
     tiempo_partida = TIEMPO_PARTIDA;
     config = cargar_config_nivel(nivel_actual);
 
-    chango.tam = (Vector2){150, 190};
+    chango.tam = (Vector2){120, 120};
     chango.pos = (Vector2){V_CENTRO_X - chango.tam.x / 2.0f, 60}; // El jugador comienza en el aire, en el centro de la pantalla
     chango.vel_y = 0;
     chango.clavando = false;
@@ -189,7 +205,6 @@ void iniciar_fin_juego()
 
 void actualizar_juego(float dt)
 {
-    // EL RELOJ DE LA PARTIDA (DOS MINUTOS)
     tiempo_partida -= dt;
     if (tiempo_partida <= 0)
     {
@@ -198,15 +213,23 @@ void actualizar_juego(float dt)
         return;
     }
 
-    // MOVER A LOS LADOS SIN SALIR DE LA PANTALLA
+    // Permite mover al jugador a los lados pero no salir de la ventana
     if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
+    {
         chango.pos.x -= VEL_LATERAL * dt;
+    }
     if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+    {
         chango.pos.x += VEL_LATERAL * dt;
+    }
     if (chango.pos.x < 0)
+    {
         chango.pos.x = 0;
+    }
     if (chango.pos.x > V_ANCHO - chango.tam.x)
+    {
         chango.pos.x = V_ANCHO - chango.tam.x;
+    }
 
     // SUBIR Y BAJAR LA GRAVEDAD CON LAS FLECHAS
     if (IsKeyDown(KEY_UP))

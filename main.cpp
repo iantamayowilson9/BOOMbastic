@@ -9,10 +9,11 @@ int main()
     InitWindow(V_ANCHO, V_ALTO, "Boombastic");
     SetTargetFPS(60);
 
+    cargar_cuadros_intro();
     iniciar_botones_menu();
     cargar_records();
-    cargar_cuadros_intro();
     cargar_ui();
+    cargar_jugador();
 
     while (!WindowShouldClose())
     {
@@ -73,6 +74,7 @@ int main()
     // Descargar imagenes y salir
     descargar_cuadros_intro();
     descargar_ui();
+    descargar_jugador();
     CloseWindow();
     return 0;
 }
